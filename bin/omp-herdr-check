@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eu
+data_home=${XDG_DATA_HOME:-$HOME/.local/share}
+install_root=${OMP_HERDR_HOME:-$data_home/omp-herdr}
+exec "$install_root/current/scripts/check.sh" "$@"

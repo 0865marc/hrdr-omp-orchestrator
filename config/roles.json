@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "roles": {
+    "orchestrator": {
+      "harness": "omp",
+      "profile": "herdr-orchestrator",
+      "model": "openai-codex/gpt-5.6-sol",
+      "reasoning": "max",
+      "spawnable": false
+    },
+    "scouter": {
+      "harness": "omp",
+      "profile": "herdr-scouter",
+      "model": "openai-codex/gpt-5.6-terra",
+      "reasoning": "medium",
+      "spawnable": true
+    },
+    "builder": {
+      "harness": "omp",
+      "profile": "herdr-builder",
+      "model": "openai-codex/gpt-5.6-sol",
+      "reasoning": "medium",
+      "spawnable": true
+    },
+    "reviewer": {
+      "harness": "omp",
+      "profile": "herdr-reviewer",
+      "model": "openai-codex/gpt-5.6-sol",
+      "reasoning": "high",
+      "spawnable": true
+    }
+  }
+}

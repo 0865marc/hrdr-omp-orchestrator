@@ -1,0 +1,21 @@
+node_modules/
+.DS_Store
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+*.pfx
+*.jks
+*.keystore
+
+# Test output and local caches
+coverage/
+.nyc_output/
+.cache/
+.bun/
+.eslintcache
+*.tsbuildinfo

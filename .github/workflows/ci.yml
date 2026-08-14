@@ -1,0 +1,16 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.2.22"
+      - run: bun test
+      - run: sh -n scripts/ownership.sh scripts/install.sh scripts/check.sh scripts/uninstall.sh scripts/auth-broker-service.sh bin/omp-herdr bin/omp-herdr-check

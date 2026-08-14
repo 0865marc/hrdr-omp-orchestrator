@@ -1,0 +1,9 @@
+{
+  "name": "omp-herdr",
+  "version": "0.1.10",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "bun test"
+  }
+}
