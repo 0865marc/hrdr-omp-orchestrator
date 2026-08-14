@@ -17,6 +17,8 @@ import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 
 const projectRoot = resolve(import.meta.dir, "..");
+const releaseVersion = readFileSync(join(projectRoot, "VERSION"), "utf8").trim();
+
 
 const ompShim = String.raw`#!/bin/sh
 set -eu
@@ -322,7 +324,7 @@ describe("installer ownership and profile safety", () => {
       const manifest = readFileSync(join(sandbox.installRoot, ".omp-herdr-manifest"), "utf8");
       expect(manifest).toContain("manifest-version=2");
       expect(manifest).toContain(`profiles=${profiles.join(" ")}`);
-      expect(manifest).toContain("release=0.1.10");
+      expect(manifest).toContain("release=0.1.11");
       expect(manifest).toContain("profile-marker=.omp-herdr-profile");
       for (const profile of profiles) {
         expect(
@@ -522,7 +524,7 @@ describe("installer ownership and profile safety", () => {
       const sentinel = join(foreignRelease, "sentinel.bin");
       const sentinelBytes = Buffer.from([19, 0, 91, 10, 255, 7]);
       writeFileSync(sentinel, sentinelBytes);
-      writeFileSync(manifest, manifestContents(`0.1.10${separator}foreign`));
+      writeFileSync(manifest, manifestContents(`${releaseVersion}${separator}foreign`));
       const manifestBefore = readFileSync(manifest);
       const currentBefore = readlinkSync(current);
       const configBefore = configSnapshot(sandbox);

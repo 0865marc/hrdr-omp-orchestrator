@@ -27,9 +27,9 @@ describe("role registry", () => {
       reviewer: [registry.roles.reviewer.model, registry.roles.reviewer.reasoning],
     }).toEqual({
       orchestrator: ["openai-codex/gpt-5.6-sol", "max"],
-      scouter: ["openai-codex/gpt-5.6-terra", "medium"],
-      builder: ["openai-codex/gpt-5.6-sol", "medium"],
-      reviewer: ["openai-codex/gpt-5.6-sol", "high"],
+      scouter: ["openai-codex/gpt-5.6-luna", "max"],
+      builder: ["openai-codex/gpt-5.6-terra", "max"],
+      reviewer: ["openai-codex/gpt-5.6-sol", "xhigh"],
     });
   });
 
@@ -39,9 +39,9 @@ describe("role registry", () => {
       "--profile",
       "herdr-scouter",
       "--model",
-      "openai-codex/gpt-5.6-terra",
+      "openai-codex/gpt-5.6-luna",
       "--thinking",
-      "medium",
+      "max",
     ]);
   });
 

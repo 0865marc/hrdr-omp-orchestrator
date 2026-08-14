@@ -195,9 +195,9 @@ describe("Herdr extension", () => {
     );
     expect(start).toContain("--profile");
     expect(start).toContain("herdr-scouter");
-    expect(start).toContain("openai-codex/gpt-5.6-terra");
+    expect(start).toContain("openai-codex/gpt-5.6-luna");
     expect(start).toContain("--thinking");
-    expect(start).toContain("medium");
+    expect(start).toContain("max");
     expect(result.isError).not.toBe(true);
     expect(result.content[0].text).toContain("SCOUTER_EVIDENCE");
     expect(result.content[0].text).toContain("State: done");

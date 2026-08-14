@@ -193,9 +193,9 @@ Small, fully localized changes may skip Scouter. Consultations may require no ch
 | Profile | Model | Reasoning | Purpose | Mutation policy |
 |---|---|---|---|---|
 | `herdr-orchestrator` | `openai-codex/gpt-5.6-sol` | `max` | Scope, decisions, delegation, final response | Read-only; delegates through Herdr |
-| `herdr-scouter` | `openai-codex/gpt-5.6-terra` | `medium` | Compressed repository exploration | Read-only |
-| `herdr-builder` | `openai-codex/gpt-5.6-sol` | `medium` | Complete implementation and assigned checks | Sole writable owner |
-| `herdr-reviewer` | `openai-codex/gpt-5.6-sol` | `high` | Review after delivery on a stable tree | Read-only |
+| `herdr-scouter` | `openai-codex/gpt-5.6-luna` | `max` | Compressed repository exploration | Read-only |
+| `herdr-builder` | `openai-codex/gpt-5.6-terra` | `max` | Complete implementation and assigned checks | Sole writable owner |
+| `herdr-reviewer` | `openai-codex/gpt-5.6-sol` | `xhigh` | Review after delivery on a stable tree | Read-only |
 
 The profiles contain role behavior and tool policy. The role registry contains runtime selection.
 
@@ -210,8 +210,8 @@ Edit `config/roles.json` before installation to select the harness, OMP profile,
     "scouter": {
       "harness": "omp",
       "profile": "herdr-scouter",
-      "model": "openai-codex/gpt-5.6-terra",
-      "reasoning": "medium",
+      "model": "openai-codex/gpt-5.6-luna",
+      "reasoning": "max",
       "spawnable": true
     }
   }
@@ -252,8 +252,8 @@ herdr agent start <workflow-local-name> \
   --pane <new-pane> \
   -- \
   --profile herdr-scouter \
-  --model openai-codex/gpt-5.6-terra \
-  --thinking medium
+  --model openai-codex/gpt-5.6-luna \
+  --thinking max
 ```
 
 The extension parses Herdr JSON responses and never predicts pane IDs. Background panes use the same repository cwd and do not steal focus.

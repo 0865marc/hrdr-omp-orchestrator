@@ -11,22 +11,22 @@
     "scouter": {
       "harness": "omp",
       "profile": "herdr-scouter",
-      "model": "openai-codex/gpt-5.6-terra",
-      "reasoning": "medium",
+      "model": "openai-codex/gpt-5.6-luna",
+      "reasoning": "max",
       "spawnable": true
     },
     "builder": {
       "harness": "omp",
       "profile": "herdr-builder",
-      "model": "openai-codex/gpt-5.6-sol",
-      "reasoning": "medium",
+      "model": "openai-codex/gpt-5.6-terra",
+      "reasoning": "max",
       "spawnable": true
     },
     "reviewer": {
       "harness": "omp",
       "profile": "herdr-reviewer",
       "model": "openai-codex/gpt-5.6-sol",
-      "reasoning": "high",
+      "reasoning": "xhigh",
       "spawnable": true
     }
   }
