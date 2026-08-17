@@ -23,16 +23,6 @@ const ALLOWED_TOOLS: Record<string, true> = {
   todo: true,
   herdr_orchestrate: true,
 };
-const FORBIDDEN_TOOLS: Record<string, true> = {
-  bash: true,
-  edit: true,
-  write: true,
-  task: true,
-  lsp: true,
-  ast_edit: true,
-  debug: true,
-  browser: true,
-};
 
 function isJsonRecord(value: unknown): value is JsonRecord {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -348,6 +338,10 @@ export default function herdrWorkflow(pi: ExtensionAPI): void {
     activatedModelSelector = undefined;
     workflowFailure = `configured orchestrator model ${orchestrator.model} has not been activated`;
     try {
+      const available = new Set(pi.getAllTools().map((tool) => tool.name));
+      await pi.setActiveTools(
+        Object.keys(ALLOWED_TOOLS).filter((name) => available.has(name)),
+      );
       const model = ctx.models.resolve(orchestrator.model);
       if (!model) {
         throw new HerdrError(`configured orchestrator model is unavailable: ${orchestrator.model}`);
@@ -367,10 +361,6 @@ export default function herdrWorkflow(pi: ExtensionAPI): void {
       activatedModelSelector = resolvedSelector;
 
       pi.setThinkingLevel(orchestrator.reasoning);
-      const available = new Set(pi.getAllTools().map((tool) => tool.name));
-      await pi.setActiveTools(
-        Object.keys(ALLOWED_TOOLS).filter((name) => available.has(name)),
-      );
       workflowReady = true;
       workflowFailure = "";
     } catch (error) {
@@ -400,15 +390,15 @@ export default function herdrWorkflow(pi: ExtensionAPI): void {
   pi.on("before_agent_start", (event) => ({
     systemPrompt: [
       ...event.systemPrompt,
-      `You are the orchestration-only OMP profile ${orchestrator.profile}. Read skill://herdr-orchestrator before acting. Delegate repository mutations through herdr_orchestrate; never implement directly.`,
+      `You are the orchestration-only OMP profile ${orchestrator.profile}. Read skill://herdr-orchestrator before acting. Use herdr_orchestrate as the only agent delegation and coordination surface; never use task, hub, eval, launch, or direct repository mutation tools. If the Herdr workflow is unavailable, fail closed instead of falling back.`,
     ],
   }));
 
   pi.on("tool_call", async (event) => {
-    if (FORBIDDEN_TOOLS[event.toolName]) {
+    if (!ALLOWED_TOOLS[event.toolName]) {
       return {
         block: true,
-        reason: `${event.toolName} is disabled in the Herdr Orchestrator profile; delegate through herdr_orchestrate`,
+        reason: `${event.toolName} is disabled in the Herdr Orchestrator profile; use herdr_orchestrate`,
       };
     }
   });

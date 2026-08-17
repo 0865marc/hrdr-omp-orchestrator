@@ -63,6 +63,13 @@ check_profile() {
         *herdr-workflow.ts*) ;;
         *) fail "$cp_profile does not load herdr-workflow.ts" ;;
       esac
+      cp_approval=$(omp --profile "$cp_profile" config get tools.approval)
+      for cp_tool in task hub eval launch; do
+        case $cp_approval in
+          *"\"$cp_tool\":\"deny\""*) ;;
+          *) fail "$cp_profile does not deny alternative delegation tool $cp_tool" ;;
+        esac
+      done
       ;;
     readonly)
       case $cp_extensions in

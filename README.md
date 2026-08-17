@@ -260,9 +260,9 @@ The extension parses Herdr JSON responses and never predicts pane IDs. Backgroun
 
 ## Isolation and safety
 
-`omp-herdr` enforces one Builder inside its own workflow, but it is not a security sandbox and does not lock the repository against unrelated processes.
+The Orchestrator uses a closed tool allowlist: `read`, `grep`, `glob`, `ask`, `todo`, and `herdr_orchestrate`. Every other current or future tool is blocked by the extension hook. The profile also explicitly denies `task`, `hub`, `eval`, and `launch`, so Herdr is the only agent delegation and coordination path. The allowlist is activated before model readiness checks and remains in force when workflow startup fails; there is no silent OMP fallback.
 
-Scouter and Reviewer load a closed tool allowlist. Only `read`, `grep`, `glob`, `inspect_image`, `ask`, and `todo` pass their `tool_call` policy; every other name, including unknown future tools, `bash`, `edit`, `write`, `python`, and `notebook`, is blocked. Builder and Orchestrator are not governed by this child-role allowlist. This is application policy, not an operating-system sandbox.
+Scouter and Reviewer load their own closed tool allowlist. Only `read`, `grep`, `glob`, `inspect_image`, `ask`, and `todo` pass their `tool_call` policy; every other name, including unknown future tools, `bash`, `edit`, `write`, `python`, and `notebook`, is blocked. Builder retains the write tools required by its sole-owner role. This is application policy, not an operating-system sandbox.
 
 Important limits:
 

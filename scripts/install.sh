@@ -268,7 +268,7 @@ skills_json="[\"$skills_path\"]"
 orchestrator_extensions="[\"$workflow_extension_path\"]"
 readonly_extensions="[\"$readonly_extension_path\"]"
 
-orchestrator_approval='{"bash":"deny","edit":"deny","write":"deny","task":"deny","lsp":"deny","ast_edit":"deny","debug":"deny","browser":"deny","python":"deny","notebook":"deny"}'
+orchestrator_approval='{"bash":"deny","edit":"deny","write":"deny","task":"deny","hub":"deny","eval":"deny","launch":"deny","lsp":"deny","ast_edit":"deny","debug":"deny","browser":"deny","python":"deny","notebook":"deny"}'
 readonly_approval='{"read":"allow","grep":"allow","glob":"allow","inspect_image":"allow","ask":"allow","todo":"allow","bash":"deny","edit":"deny","write":"deny","task":"deny","lsp":"deny","ast_edit":"deny","debug":"deny","browser":"deny","python":"deny","notebook":"deny"}'
 builder_approval='{"task":"deny"}'
 

@@ -324,7 +324,7 @@ describe("installer ownership and profile safety", () => {
       const manifest = readFileSync(join(sandbox.installRoot, ".omp-herdr-manifest"), "utf8");
       expect(manifest).toContain("manifest-version=2");
       expect(manifest).toContain(`profiles=${profiles.join(" ")}`);
-      expect(manifest).toContain("release=0.1.11");
+      expect(manifest).toContain(`release=${releaseVersion}`);
       expect(manifest).toContain("profile-marker=.omp-herdr-profile");
       for (const profile of profiles) {
         expect(
@@ -354,6 +354,24 @@ describe("installer ownership and profile safety", () => {
         "read-only-policy.ts",
       );
       expect(readFileSync(configPath(sandbox, "herdr-builder", "extensions"), "utf8")).toBe("[]");
+      expect(
+        JSON.parse(
+          readFileSync(
+            configPath(sandbox, "herdr-orchestrator", "tools.approval"),
+            "utf8",
+          ),
+        ),
+      ).toMatchObject({
+        task: "deny",
+        hub: "deny",
+        eval: "deny",
+        launch: "deny",
+      });
+      expect(
+        JSON.parse(
+          readFileSync(configPath(sandbox, "herdr-builder", "tools.approval"), "utf8"),
+        ),
+      ).toEqual({ task: "deny" });
 
       const check = runScript(sandbox, "check.sh");
       expect(check.status).toBe(0);
@@ -381,6 +399,30 @@ describe("installer ownership and profile safety", () => {
       expect(second.status).toBe(0);
       expect(second.stdout).toContain("nothing to remove");
       expect(readFileSync(payloadSentinel)).toEqual(sentinelBytes);
+    } finally {
+      cleanup(sandbox);
+    }
+  });
+
+  test("check rejects orchestrator alternative delegation policy drift", () => {
+    const sandbox = createSandbox();
+    try {
+      installOrThrow(sandbox);
+      const approvalPath = configPath(
+        sandbox,
+        "herdr-orchestrator",
+        "tools.approval",
+      );
+      const approval = JSON.parse(readFileSync(approvalPath, "utf8"));
+      delete approval.hub;
+      writeFileSync(approvalPath, JSON.stringify(approval));
+
+      const result = runScript(sandbox, "check.sh");
+
+      expect(result.status).not.toBe(0);
+      expect(result.stderr).toContain(
+        "herdr-orchestrator does not deny alternative delegation tool hub",
+      );
     } finally {
       cleanup(sandbox);
     }

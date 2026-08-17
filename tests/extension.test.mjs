@@ -54,10 +54,16 @@ function createHarness(options = {}) {
         { name: "ask" },
         { name: "todo" },
         { name: "herdr_orchestrate" },
+        { name: "task" },
+        { name: "hub" },
+        { name: "eval" },
+        { name: "launch" },
+        { name: "future_delegate" },
       ];
     },
     async setActiveTools(tools) {
       activeToolEvents.push(tools);
+      if (options.setActiveToolsThrows) throw new Error("setActiveTools failed");
     },
     async setModel(model) {
       modelEvents.push(["set", model]);
@@ -257,7 +263,7 @@ describe("Herdr extension", () => {
     expect(harness.calls).toHaveLength(0);
   });
 
-  test("activates the mandatory orchestrator model before workflow tools", async () => {
+  test("activates the closed tool allowlist and mandatory orchestrator model", async () => {
     const harness = createHarness();
     await harness.startSession();
 
@@ -276,8 +282,33 @@ describe("Herdr extension", () => {
     ]);
   });
 
+  test.each(["task", "hub", "eval", "launch", "future_delegate"])(
+    "blocks alternative delegation tool %s",
+    async (toolName) => {
+      const harness = createHarness();
+      await harness.startSession();
+
+      const result = await harness.handlers.get("tool_call")({ toolName });
+
+      expect(result).toEqual({
+        block: true,
+        reason: `${toolName} is disabled in the Herdr Orchestrator profile; use herdr_orchestrate`,
+      });
+    },
+  );
+
+  test("allows only the Herdr orchestration surface through the tool hook", async () => {
+    const harness = createHarness();
+    await harness.startSession();
+
+    expect(
+      await harness.handlers.get("tool_call")({ toolName: "herdr_orchestrate" }),
+    ).toBeUndefined();
+  });
+
   test.each([
     ["resolve failure", { resolveThrows: true }, "resolve failed"],
+    ["tool isolation failure", { setActiveToolsThrows: true }, "setActiveTools failed"],
     ["unavailable model", { resolveResult: undefined }, "model is unavailable"],
     ["setModel rejection", { setModelResult: false }, "could not be activated"],
     ["setModel failure", { setModelThrows: true }, "setModel failed"],
@@ -295,7 +326,9 @@ describe("Herdr extension", () => {
     expect(result.isError).toBe(true);
     expect(result.content[0].text).toContain(expected);
     expect(harness.thinkingEvents).toEqual([]);
-    expect(harness.activeToolEvents).toEqual([]);
+    expect(harness.activeToolEvents).toEqual([
+      ["read", "grep", "glob", "ask", "todo", "herdr_orchestrate"],
+    ]);
     expect(harness.calls).toEqual([]);
     expect(harness.uiEvents).toContainEqual([
       "status",
